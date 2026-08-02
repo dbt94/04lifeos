@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 //
-// IsaReconcile.ts — Sweep every MEMORY/WORK/<slug>/ISA.md and reconcile work.json.
+// ISAReconcile.ts — Sweep every MEMORY/WORK/<slug>/ISA.md and reconcile work.json.
 //
 // ISASync.hook.ts only fires on PostToolUse Edit/Write of an ISA. ISAs that
 // were abandoned mid-run (e.g., stranded at `phase: verify`) and later fell
@@ -11,12 +11,12 @@
 // converges to it, never the other way.
 //
 // Usage:
-//   bun run ~/.claude/LIFEOS/TOOLS/IsaReconcile.ts                       (default: --audit)
-//   bun run ~/.claude/LIFEOS/TOOLS/IsaReconcile.ts --audit               (report drift, no writes)
-//   bun run ~/.claude/LIFEOS/TOOLS/IsaReconcile.ts --fix                 (sync drift into work.json)
-//   bun run ~/.claude/LIFEOS/TOOLS/IsaReconcile.ts --fix --abandon-old-verify
+//   bun run ~/.claude/LIFEOS/TOOLS/ISAReconcile.ts                       (default: --audit)
+//   bun run ~/.claude/LIFEOS/TOOLS/ISAReconcile.ts --audit               (report drift, no writes)
+//   bun run ~/.claude/LIFEOS/TOOLS/ISAReconcile.ts --fix                 (sync drift into work.json)
+//   bun run ~/.claude/LIFEOS/TOOLS/ISAReconcile.ts --fix --abandon-old-verify
 //     also marks stranded phase:verify ISAs >7d old as phase:complete (writes ISA frontmatter)
-//   bun run ~/.claude/LIFEOS/TOOLS/IsaReconcile.ts --json                (machine-readable)
+//   bun run ~/.claude/LIFEOS/TOOLS/ISAReconcile.ts --json                (machine-readable)
 //
 
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from "fs";
@@ -58,7 +58,7 @@ interface DriftRow {
   action: "noop" | "synced" | "abandoned-then-synced" | "skipped";
 }
 
-function findIsaPath(slug: string): string | null {
+function findISAPath(slug: string): string | null {
   const dir = join(WORK_DIR, slug);
   const isa = join(dir, ARTIFACT_FILENAME);
   if (existsSync(isa)) return isa;
@@ -87,7 +87,7 @@ const slugs = existsSync(WORK_DIR) ? readdirSync(WORK_DIR) : [];
 // to be deterministic.
 const sortedSlugs = slugs
   .map((slug) => {
-    const path = findIsaPath(slug);
+    const path = findISAPath(slug);
     if (!path) return null;
     try {
       return { slug, path, mtime: statSync(path).mtimeMs };
